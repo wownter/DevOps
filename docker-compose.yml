@@ -1,0 +1,53 @@
+
+services:
+  backend:
+    image: wownter/backend:2.0
+
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+
+    restart: unless-stopped
+
+    volumes:
+      - type: bind
+        source: ../backend/data.txt
+        target: /app/data.txt
+
+    networks:
+      - devops_network
+
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5001/read', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  frontend:
+    image: wownter/frontend:2.0
+
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+
+    ports:
+      - "127.0.0.1:8080:80"
+
+    depends_on:
+      backend:
+        condition: service_healthy
+
+    restart: unless-stopped
+
+    networks:
+      - devops_network
+
+networks:
+  devops_network:
+    driver: bridge
+
