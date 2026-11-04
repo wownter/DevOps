@@ -1,0 +1,66 @@
+
+---
+# Проверка операционной системы
+- name: Check Ubuntu version and architecture
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['distribution'] == 'Ubuntu'
+      - ansible_facts['distribution_major_version'] == '24'
+      - ansible_facts['architecture'] == 'x86_64'
+    fail_msg: "This role requires Ubuntu 24.04 AMD64"
+
+# Установка необходимых пакетов
+- name: Install required packages
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+      - git
+    state: present
+    update_cache: true
+
+# Создание каталога для ключей
+- name: Create APT keyrings directory
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+# Загрузка официального GPG-ключа Docker
+- name: Download Docker GPG key
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    mode: '0644'
+
+# Подключение официального репозитория Docker
+- name: Configure Docker APT repository
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/docker.sources
+    mode: '0644'
+    content: |
+      Types: deb
+      URIs: https://download.docker.com/linux/ubuntu
+      Suites: {{ ansible_facts['distribution_release'] }}
+      Components: stable
+      Architectures: amd64
+      Signed-By: /etc/apt/keyrings/docker.asc
+
+# Установка Docker и Docker Compose
+- name: Install Docker Engine and Compose
+  ansible.builtin.apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+    update_cache: true
+
+# Включение и запуск Docker
+- name: Enable and start Docker service
+  ansible.builtin.systemd_service:
+    name: docker
+    enabled: true
+    state: started

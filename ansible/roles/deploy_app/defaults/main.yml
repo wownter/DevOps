@@ -1,0 +1,17 @@
+
+---
+app_user: devops
+
+app_root: "/home/{{ app_user }}/LR1_Git"
+
+app_repositories:
+  - name: frontend
+    repo: https://github.com/wownter/frontend.git
+
+  - name: backend
+    repo: https://github.com/wownter/backend.git
+
+  - name: DevOps
+    repo: https://github.com/wownter/DevOps.git
+
+app_branch: main

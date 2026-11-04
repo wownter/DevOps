@@ -1,0 +1,33 @@
+
+---
+# 1. Установка Docker
+- name: Install Docker and Docker Compose
+  ansible.builtin.import_tasks: install_docker.yml
+  tags:
+    - deploy
+
+# 2. Клонирование репозиториев
+- name: Clone GitHub repositories
+  ansible.builtin.import_tasks: clone_repos.yml
+  tags:
+    - deploy
+
+# 3. Развёртывание приложения
+- name: Deploy application
+  ansible.builtin.import_tasks: deploy.yml
+  tags:
+    - deploy
+
+# 4. Запуск контейнеров
+- name: Start application
+  ansible.builtin.import_tasks: start.yml
+  tags:
+    - never
+    - start
+
+# 5. Остановка контейнеров
+- name: Stop application
+  ansible.builtin.import_tasks: stop.yml
+  tags:
+    - never
+    - stop

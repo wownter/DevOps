@@ -1,0 +1,22 @@
+---
+# Создание постоянного файла данных
+- name: Ensure persistent data.txt exists
+  ansible.builtin.copy:
+    dest: "{{ app_root }}/backend/data.txt"
+    content: ""
+    force: false
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: "0644"
+
+# Сборка и запуск микросервисов
+- name: Build and deploy microservices
+  community.docker.docker_compose_v2:
+    project_src: "{{ app_root }}/DevOps"
+    files:
+      - docker-compose.yml
+    state: present
+    build: always
+    wait: true
+    wait_timeout: 180
+    remove_orphans: true

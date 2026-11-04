@@ -1,0 +1,12 @@
+
+---
+- name: Start existing microservices
+  community.docker.docker_compose_v2:
+    project_src: "{{ app_root }}/DevOps"
+    files:
+      - docker-compose.yml
+    state: present
+    build: never
+    pull: never
+    wait: true
+    wait_timeout: 120

@@ -1,0 +1,21 @@
+
+---
+- name: Create application directory
+  ansible.builtin.file:
+    path: "{{ app_root }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: "0755"
+
+- name: Clone application repositories
+  become_user: "{{ app_user }}"
+  ansible.builtin.git:
+    repo: "{{ item.repo }}"
+    dest: "{{ app_root }}/{{ item.name }}"
+    version: "{{ app_branch }}"
+    update: true
+    force: false
+  loop: "{{ app_repositories }}"
+  loop_control:
+    label: "{{ item.name }}"

@@ -1,0 +1,10 @@
+
+---
+- name: DevOps Lab 3 - Ansible deployment
+  hosts: devops_nodes
+  become: true
+  gather_facts: true
+
+  roles:
+    - role: deploy_app
+

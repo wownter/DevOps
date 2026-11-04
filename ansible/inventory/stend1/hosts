@@ -1,0 +1,9 @@
+
+[devops_nodes]
+ubuntu-devops ansible_host=192.168.64.3
+
+[devops_nodes:vars]
+ansible_user=devops
+ansible_port=22
+ansible_ssh_private_key_file=~/.ssh/ansible_devops
+ansible_python_interpreter=/usr/bin/python3
